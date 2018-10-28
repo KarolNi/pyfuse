@@ -214,7 +214,7 @@ class FuseBridge(object):
 
         fuse_args = [x for pair in [("-o", x) for x in fuse_opts] for x in pair]
 
-        argv = [argv[0], "-s"] + fuse_args + argv[1:]
+        argv = [argv[0], "-s", "-f"] + fuse_args + argv[1:]
         argc = len(argv)
         argv = self.make_string_array(argv)
 
