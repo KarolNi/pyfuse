@@ -11,11 +11,15 @@ The basic idea is that Pyfuse hides most of the FUSE weirdness and ctypes
 weirdness, and allows you to get down to the business of implementing
 your filesystem.
 
+## License ##
+
+Pyfuse is licensed under GPLv2.
+
 ## Naming ##
 
 There's a name collision with the other Pyfuse module. I know.
 
-### Requirements ##
+## Requirements ##
 
 Pyfuse has been tested and works on Fedora, Ubuntu, and MacOS. It'll probably
 work on just about anything with Python 3.4+, a FUSE installation (libfuse and
@@ -24,7 +28,7 @@ headers (you'll need to install the XCode CLI tools on MacOS to get these).
 
 ## Current Status ##
 
-At present, Pyfuse is working and has been functionally tests. There are no
+At present, Pyfuse is working and has been functionally tested. There are no
 known bugs, although I might eventually add ioctl support. There's a sample
 filesystem implemented in hello.py.
 
