@@ -35,6 +35,8 @@ class HelloFs(pyfuse.BasicFs):
         attributes.uid = os.getuid()
         attributes.gid = os.getgid()
         attributes.size = 42
+        attributes.ctime = 100
+        attributes.mtime = 101
 
         if path == "/":
             attributes.mode = tools.STAT_CONSTANTS["S_IFDIR"] | 0o755

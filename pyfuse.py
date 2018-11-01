@@ -43,7 +43,9 @@ class FileAttributes(ct.Structure):
     _fields_ = [("size", ct.c_uint64),
                 ("mode", ct.c_uint32),
                 ("uid", ct.c_uint32),
-                ("gid", ct.c_uint32)]
+                ("gid", ct.c_uint32),
+                ("mtime", ct.c_uint64),
+                ("ctime", ct.c_uint64)]
 
 
 #pylint: disable=invalid-name

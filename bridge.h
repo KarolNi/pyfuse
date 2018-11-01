@@ -18,6 +18,8 @@ struct file_attributes {
     uint32_t mode;
     uint32_t uid;
     uint32_t gid;
+    uint64_t mtime;
+    uint64_t ctime;
 };
 
 /*----------------------------------------------------------------------------*/

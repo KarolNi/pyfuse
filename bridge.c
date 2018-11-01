@@ -50,6 +50,8 @@ static void load_attributes(const struct stat *in,
     out->uid = in->st_uid;
     out->gid = in->st_gid;
     out->size = in->st_size;
+    out->mtime = in->st_mtime;
+    out->ctime = in->st_ctime;
 }
 
 static void unload_attributes(const struct file_attributes *in,
@@ -59,6 +61,8 @@ static void unload_attributes(const struct file_attributes *in,
     out->st_uid = in->uid;
     out->st_gid = in->gid;
     out->st_size = in->size;
+    out->st_mtime = in->mtime;
+    out->st_ctime = in->ctime;
 }
 
 /*----------------------------------------------------------------------------*/
