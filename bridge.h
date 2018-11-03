@@ -80,6 +80,13 @@ typedef int (*python_write_ptr)(const char *path, const char *inbuf,
 
 typedef int (*python_truncate_ptr)(const char *path, uint64_t size);
 
+/* The "file_info" struct will arrive with whatever values were
+ * set inside of the fuse "fuse_file_info" struct. After the
+ * callback has completed, the members of *info will be loaded
+ * back into the fuse struct. */
+
+typedef void (*python_release_ptr)(const char *path, struct file_info *info);
+
 /*--------------------------------------------------------------------*/
 
 struct callbacks {
@@ -90,6 +97,7 @@ struct callbacks {
     python_read_ptr read;
     python_write_ptr write;
     python_truncate_ptr truncate;
+    python_release_ptr release;
 };
 
 /*--------------------------------------------------------------------*/

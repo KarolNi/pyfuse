@@ -8,7 +8,10 @@ This scheme provides Python-side independence from all the platform-specific
 aspects of the the underlying fuse and stat structures.
 
 This library is under heavy development, and should be expected to change
-over time. """
+over time. 
+
+System errors returned from functions should be negated as per libfuse
+convention. """
 
 import time
 import multiprocessing
@@ -65,6 +68,8 @@ WritePtrType = ct.CFUNCTYPE(ct.c_int, ct.c_char_p, ct.c_void_p, ct.c_uint64,
 
 TruncatePtrType = ct.CFUNCTYPE(ct.c_int, ct.c_char_p, ct.c_uint64)
 
+ReleasePtrType = ct.CFUNCTYPE(ct.c_void_p, ct.c_char_p, ct.POINTER(FileInfo))
+
 MainPtrType = ct.CFUNCTYPE(ct.c_int, ct.c_int, ct.POINTER(ct.c_char_p))
 #pylint: enable=invalid-name
 
@@ -80,7 +85,8 @@ class Callbacks(ct.Structure):
                 ("access", AccessPtrType),
                 ("read", ReadPtrType),
                 ("write", WritePtrType),
-                ("truncate", TruncatePtrType)]
+                ("truncate", TruncatePtrType),
+                ("release", ReleasePtrType)]
 
 
 def register_signal_callback(callback, signum):
@@ -288,6 +294,7 @@ class BasicFs(object):
         self.bridge.callbacks.read = ReadPtrType(self._fs_read)
         self.bridge.callbacks.write = WritePtrType(self._fs_write)
         self.bridge.callbacks.truncate = TruncatePtrType(self._fs_truncate)
+        self.bridge.callbacks.release = ReleasePtrType(self._fs_release)
 
     def _fs_open(self, path, info_ptr):
         """ Wraps user-provided open() """
@@ -357,6 +364,11 @@ class BasicFs(object):
 
         return self.truncate(path.decode(), size)
 
+    def _fs_release(self, path, info_ptr):
+        """ Wraps user-provided release() """
+
+        self.release(path.decode(), info_ptr.contents)
+
     def main(self, argv=()):
         """ Launches FUSE filesystem. Returns when the filesystem is dismounted
         or FUSE is otherwise terminated. """
@@ -425,6 +437,15 @@ class BasicFs(object):
 
         sys.stderr.write("'Truncate' not implemented in this filesystem.\n")
         return -1
+
+    def release(self, path, info):
+        #pylint: disable=unused-argument, no-self-use, too-many-arguments
+        """ Releases file (called by OS when close method is called on last
+        file handle). Returned value is ignored """
+
+        # suppress error as release is optional
+        # sys.stderr.write("'Release' not implemented in this filesystem.\n")
+        pass
 
 
 def main():

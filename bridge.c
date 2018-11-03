@@ -187,6 +187,20 @@ static int bridge_write(const char *path, const char *buf, size_t size,
     return retval;
 }
 
+static int bridge_release(const char *path, struct fuse_file_info *fi)
+{
+    struct file_info info = {0};
+
+    if (python_callbacks.write == NULL) {
+        return -EPERM;
+    }
+
+    load_file_info(fi, &info);
+    python_callbacks.release(path, &info);
+    unload_file_info(&info, fi);
+    return 0;
+}
+
 static struct fuse_operations bridge_oper = {
     .getattr = bridge_getattr,
     .readdir = bridge_readdir,
@@ -194,7 +208,8 @@ static struct fuse_operations bridge_oper = {
     .open = bridge_open,
     .read = bridge_read,
     .write = bridge_write,
-    .access = bridge_access
+    .access = bridge_access,
+    .release = bridge_release
 };
 
 int bridge_main(int argc, char *argv[])
