@@ -205,7 +205,7 @@ class FuseBridge(object):
 
         return array
 
-    def _main(self, argv):
+    def _main(self, argv, foreground):
         """ Internally-launched routine for calling the FUSE event loop. This
         routine is spawned in a new Process() instance by self.main(), and
         generally shouldn't be called directly. """
@@ -222,7 +222,11 @@ class FuseBridge(object):
 
         fuse_args = [x for pair in [("-o", x) for x in fuse_opts] for x in pair]
 
-        argv = [argv[0], "-s", "-f"] + fuse_args + argv[1:]
+        if foreground:
+            argv = [argv[0], "-s", "-f"] + fuse_args + argv[1:]
+        else:
+            argv = [argv[0], "-s"] + fuse_args + argv[1:]
+
         argc = len(argv)
         argv = self.make_string_array(argv)
 
@@ -230,7 +234,7 @@ class FuseBridge(object):
         self.result = self.extern.bridge_main(argc, argv)
         return self.result
 
-    def main(self, argv):
+    def main(self, argv, foreground=False):
         """ Main routine for launching FUSE bridge after the user has finished
         connecting callbacks. """
 
@@ -249,7 +253,7 @@ class FuseBridge(object):
                 self.mount_point = os.path.abspath(arg)
                 break
 
-        self.process = multiprocessing.Process(target=self._main, args=(argv,))
+        self.process = multiprocessing.Process(target=self._main, args=(argv, foreground,))
         self.process.start()
 
         def cleanup():
@@ -369,12 +373,12 @@ class BasicFs(object):
 
         self.release(path.decode(), info_ptr.contents)
 
-    def main(self, argv=()):
+    def main(self, argv=(), foreground=False):
         """ Launches FUSE filesystem. Returns when the filesystem is dismounted
         or FUSE is otherwise terminated. """
 
         assert isinstance(argv, (list, tuple))
-        return self.bridge.main(argv)
+        return self.bridge.main(argv, foreground=foreground)
 
     def open(self, path, info):
         #pylint: disable=unused-argument, no-self-use

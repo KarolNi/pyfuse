@@ -4,14 +4,15 @@
 # TODO:
 # direct_io=True
 
-import pyfuse
+try:
+    from .pyfuse import tools, BasicFs, FileAttributes
+except (SystemError, ImportError):
+    from pyfuse import tools, BasicFs, FileAttributes
 import os
 import sys
 
-tools = pyfuse.tools
 
-
-class ReadonlyPassthrough(pyfuse.BasicFs):
+class ReadonlyPassthrough(BasicFs):
 
     def __init__(self, base_path):
         self.base_path = base_path
@@ -61,7 +62,7 @@ class ReadonlyPassthrough(pyfuse.BasicFs):
         if not os.path.exists(self._full_path(path)):
             return -tools.ERRNO_CONSTANTS["ENOENT"]
 
-        attributes = pyfuse.FileAttributes()
+        attributes = FileAttributes()
         stats = os.stat(self._full_path(path))
         attributes.size = stats.st_size
         # reset write permission bits
@@ -86,7 +87,7 @@ def main():
 
     passthrough = ReadonlyPassthrough(sys.argv[1])
     del sys.argv[1]
-    sys.exit(passthrough.main(sys.argv))
+    sys.exit(passthrough.main(sys.argv, foreground=True))
 
 
 if __name__ == "__main__":
