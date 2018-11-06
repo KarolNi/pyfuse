@@ -30,9 +30,9 @@ headers (you'll need to install the XCode CLI tools on MacOS to get these).
 
 Suggested packages:
 
-'''
+```
 g++-multilib python3-dev
-'''
+```
 
 ## Current Status ##
 
