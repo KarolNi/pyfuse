@@ -26,6 +26,14 @@ work on just about anything with Python 3.4+, a FUSE installation (libfuse and
 libfuse-dev on Linux, OSXFUSE on MacOS), a C compiler, and a set of system
 headers (you'll need to install the XCode CLI tools on MacOS to get these).
 
+### Ubuntu ###
+
+Suggested packages:
+
+'''
+g++-multilib python3-dev
+'''
+
 ## Current Status ##
 
 At present, Pyfuse is working and has been functionally tested. There are no
